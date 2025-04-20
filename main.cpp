@@ -59,5 +59,8 @@ void extractBMIsFromFile(vector<Patient*> &list) {
 }
 
 int main(){
+    vector<Patient*> Patients = {};
+    extractBMIsFromFile(Patients);
+
     return 0;
 }
