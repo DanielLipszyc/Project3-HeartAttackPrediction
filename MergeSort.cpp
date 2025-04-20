@@ -1,5 +1,51 @@
-//
-// Created by Daniel Lipszyc on 4/20/25.
-//
-
+#include <vector>
 #include "MergeSort.h"
+using namespace std;
+
+void merge(std::vector<Patient*>& P, int left, int mid, int right) {
+    int indexLeft = mid - left + 1;
+    int indexRight = right - mid;
+    vector<int> Left(indexLeft);
+    vector<int> Right(indexRight);
+
+    for (int i = 0; i < indexLeft; i++)
+        Left[i] = P[left + i]->BMI;
+    for (int j = 0; j < indexRight; j++)
+        Right[j] = P[mid + 1 + j]->BMI;
+
+    int i = 0;
+    int j = 0;
+    int k = left;
+
+    while (i < indexLeft && j < indexRight) {
+        if (Left[i] <= Right[j]) {
+            P[k]->BMI = Left[i];
+            i++;
+        } else {
+            P[k]->BMI = Right[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < indexLeft) {
+        P[k]->BMI = Left[i];
+        i++;
+        k++;
+    }
+
+    while (j < indexRight) {
+        P[k]->BMI = Right[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(std::vector<Patient*>& P, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSort(P, left, mid);
+        mergeSort(P, mid + 1, right);
+        merge(P, left, mid, right);
+    }
+}

@@ -1,14 +1,12 @@
-//
-// Created by Daniel Lipszyc on 4/20/25.
-//
+#include "PatientObject.h"
+using namespace std;
 
 #ifndef PROJECT3_HEARTATTACKPREDICTION_MERGESORT_H
 #define PROJECT3_HEARTATTACKPREDICTION_MERGESORT_H
 
 
-class MergeSort {
-
-};
+void merge(vector<Patient*>& P, int left, int mid, int right);
+void mergeSort(vector<Patient*>& P, int left, int right);
 
 
 #endif //PROJECT3_HEARTATTACKPREDICTION_MERGESORT_H
