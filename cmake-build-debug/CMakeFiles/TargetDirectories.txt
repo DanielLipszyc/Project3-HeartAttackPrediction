@@ -1,0 +1,3 @@
+/Users/daniellipszyc/CLionProjects/Project3-HeartAttackPrediction/cmake-build-debug/CMakeFiles/Project3_HeartAttackPrediction.dir
+/Users/daniellipszyc/CLionProjects/Project3-HeartAttackPrediction/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/daniellipszyc/CLionProjects/Project3-HeartAttackPrediction/cmake-build-debug/CMakeFiles/rebuild_cache.dir
