@@ -4,6 +4,8 @@
 #include "RadixSort.h"
 #include "MergeSort.h"
 #include <ctime>
+#include <iomanip>
+#include <chrono>
 using namespace std;
 
 void InterfaceUI::ExtractBMIsFromFile() {
@@ -56,22 +58,57 @@ void InterfaceUI::ExtractBMIsFromFile() {
 }
 
 
-string InterfaceUI::MergeSortMethod() {
-    time_t start, end;
-    time(&start);
-    mergeSort(this->patients, 0, this->patients.size() - 1);
-    time(&end);
-    double diff = difftime(end, start);
-    return to_string(diff) + " - Merge Sort" ;
+double InterfaceUI::GetAverageScore(int filter) {
+    int targetBMI = filter;
+    int positive = 0;
+    int total = 0;
+    vector<Patient*> BMI_Group = {};
+    for(int i = 0; i < this->patients.size(); i++){
+        if(this->patients[i]->BMI < targetBMI){
+            i++;
+        }
+        else if(this->patients[i]->BMI == targetBMI){
+            BMI_Group.push_back(this->patients[i]);
+            i++;
+        }
+        else{
+            break;
+        }
+    }
+
+    for(Patient* P : BMI_Group){
+        if(P->HAO == 1){
+            positive++;
+        }
+        total++;
+    }
+
+    double average = (positive*1.0) / total;
+    return average * 100;
 }
 
-string InterfaceUI::RadixSortMethod() {
-    time_t start, end;
-    time(&start);
+pair<string, string> InterfaceUI::MergeSortMethod( int filterValue) {
+    auto start = std::chrono::high_resolution_clock::now();
+    mergeSort(this->patients, 0, this->patients.size() - 1);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    double result = GetAverageScore(filterValue);
+    stringstream ss;
+    ss << fixed << setprecision(2) << result;
+    string resultStr = ss.str();
+    return make_pair(resultStr + "%", to_string(duration.count()) + " microseconds.");
+}
+
+pair<string, string> InterfaceUI::RadixSortMethod( int filterValue) {
+    auto start = std::chrono::high_resolution_clock::now();
     radixSort(this->patients);
-    time(&end);
-    double diff = difftime(end, start);
-    return to_string(diff) + " - Radix Sort";
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    double result = GetAverageScore(filterValue);
+    stringstream ss;
+    ss << fixed << setprecision(2) << result;
+    string resultStr = ss.str();
+    return make_pair(resultStr + "%", to_string(duration.count()) + " microseconds.");
 }
 
 
@@ -80,17 +117,17 @@ void InterfaceUI::SFMLInterface() {
     string fontPath = "../resources/Fonts/arial.ttf";
 
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode({800, 500}), "DIM Sort Algorithms", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode({800, 500}), "DIM Team - Sort Algorithms", sf::Style::Titlebar | sf::Style::Close);
     //Set main banner
     sf::Font fontTitle;
     fontTitle.loadFromFile(fontPath);
     sf::Text textTitle; // a font is required to make a text object
     textTitle.setFont(fontTitle);
     textTitle.setString("Merge Sort vs Radix Sort");
-    textTitle.setCharacterSize(30); // in pixels, not points!
+    textTitle.setCharacterSize(36); // in pixels, not points!
     textTitle.setFillColor(sf::Color::Blue);
     textTitle.setStyle(sf::Text::Bold | sf::Text::Underlined);
-    textTitle.setPosition((window.getSize().x / 2)- 190, 50);
+    textTitle.setPosition((window.getSize().x / 2)- 220, 50);
 
 
     //Enter Value Label
@@ -98,34 +135,34 @@ void InterfaceUI::SFMLInterface() {
     fontLabel.loadFromFile(fontPath);
     sf::Text textLabel; // a font is required to make a text object
     textLabel.setFont(fontLabel);
-    textLabel.setString("Enter Value: ");
+    textLabel.setString("Enter Value Between 18 to 40: ");
     textLabel.setCharacterSize(20); // in pixels, not points!
     textLabel.setFillColor(sf::Color::Blue);
     textLabel.setStyle(sf::Text::Bold);
-    textLabel.setPosition(150, 200);
+    textLabel.setPosition(150, 150);
 
     //Enter Value Text
     sf::Font fontInput;
     fontInput.loadFromFile(fontPath);
     sf::Text textInput; // a font is required to make a text object
     textInput.setFont(fontInput);
-    textInput.setString("12");
+    textInput.setString("00");
     textInput.setCharacterSize(20); // in pixels, not points!
     textInput.setFillColor(sf::Color::Blue);
-    textInput.setPosition(300, 200);
+    textInput.setPosition(470, 150);
 
-    //Result Label
+    //Result Label Average
     sf::Font fontResultLabel;
     fontResultLabel.loadFromFile(fontPath);
     sf::Text textResultLabel; // a font is required to make a text object
     textResultLabel.setFont(fontResultLabel);
-    textResultLabel.setString("Result Value: ");
+    textResultLabel.setString("Your chances of a heart attack is: ");
     textResultLabel.setCharacterSize(20); // in pixels, not points!
     textResultLabel.setFillColor(sf::Color::Black);
     textResultLabel.setStyle(sf::Text::Bold);
-    textResultLabel.setPosition(100, 420);
+    textResultLabel.setPosition(100, 370);
 
-    //Result Label
+    //Result Value Average
     sf::Font fontResultValue;
     fontResultValue.loadFromFile(fontPath);
     sf::Text textResultValue; // a font is required to make a text object
@@ -133,25 +170,69 @@ void InterfaceUI::SFMLInterface() {
     textResultValue.setCharacterSize(20); // in pixels, not points!
     textResultValue.setFillColor(sf::Color::Black);
     textResultValue.setStyle(sf::Text::Bold);
-    textResultValue.setPosition(240, 420);
+    textResultValue.setPosition(450, 370);
 
+    //Result Label Sort Elapsed Time
+    sf::Font fontElapsedTimeLabel;
+    fontElapsedTimeLabel.loadFromFile(fontPath);
+    sf::Text textElapsedTimeLabel; // a font is required to make a text object
+    textElapsedTimeLabel.setFont(fontElapsedTimeLabel);
+    textElapsedTimeLabel.setString("Sort - Elapsed Time : ");
+    textElapsedTimeLabel.setCharacterSize(20); // in pixels, not points!
+    textElapsedTimeLabel.setFillColor(sf::Color::Black);
+    textElapsedTimeLabel.setStyle(sf::Text::Bold);
+    textElapsedTimeLabel.setPosition(100, 420);
+
+    //Result Value Average
+    sf::Font fontElapsedTimeValue;
+    fontElapsedTimeValue.loadFromFile(fontPath);
+    sf::Text textElapsedTimeValue; // a font is required to make a text object
+    textElapsedTimeValue.setFont(fontElapsedTimeValue);
+    textElapsedTimeValue.setCharacterSize(20); // in pixels, not points!
+    textElapsedTimeValue.setFillColor(sf::Color::Black);
+    textElapsedTimeValue.setStyle(sf::Text::Bold);
+    textElapsedTimeValue.setPosition(350, 420);
 
     //Radix Button
     sf::Texture radixTexture;
     radixTexture.loadFromFile("../resources/images/btnradixsort.png");
     sf::Sprite radixSprite(radixTexture);
-    radixSprite.setPosition(sf::Vector2f(100,300));
+    radixSprite.setPosition(sf::Vector2f(100,250));
 
     //Merge Button
     sf::Texture mergeTexture;
     mergeTexture.loadFromFile("../resources/images/btnmergesort.png");
     sf::Sprite mergeSprite(mergeTexture);
-    mergeSprite.setPosition(sf::Vector2f(468,300));
+    mergeSprite.setPosition(sf::Vector2f(468,250));
 
-    string input_text;
-    string output_text;
+    //Warning
+    sf::Font fontWarningLabel;
+    fontWarningLabel.loadFromFile(fontPath);
+    sf::Text textWarningLabel; // a font is required to make a text object
+    textWarningLabel.setFont(fontWarningLabel);
+    textWarningLabel.setString("* The number entered is not valid!!");
+    textWarningLabel.setCharacterSize(15); // in pixels, not points!
+    textWarningLabel.setFillColor(sf::Color::Red);
+    textWarningLabel.setStyle(sf::Text::Italic);
+    textWarningLabel.setPosition(150, 175);
+
+    //Warning
+    sf::Font fontTeamLabel;
+    fontTeamLabel.loadFromFile(fontPath);
+    sf::Text textTeamLabel; // a font is required to make a text object
+    textTeamLabel.setFont(fontTeamLabel);
+    textTeamLabel.setString("D(aniel) I(vana) M(arian) Team");
+    textTeamLabel.setCharacterSize(15); // in pixels, not points!
+    textTeamLabel.setFillColor(sf::Color::Black);
+    textTeamLabel.setStyle(sf::Text::Bold);
+    textTeamLabel.setPosition(530, 480);
+
+    string input_text = "";
+    pair<string, string> output_text;
 
     sf::Clock clock;
+
+    bool validNumber = true;
 
     while (window.isOpen())
     {
@@ -164,31 +245,41 @@ void InterfaceUI::SFMLInterface() {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                     if ((mousePos.x >= 100 ) && (mousePos.x <= 332 )
-                        && (mousePos.y >= 300 ) && (mousePos.y <= 382 )) {
-                        output_text =RadixSortMethod();
-                        //output_text = "using radix";
-                        textResultValue.setString(output_text);
+                        && (mousePos.y >= 250 ) && (mousePos.y <= 332 )) {
+                            if (stoi(input_text) >=18 && stoi(input_text) <=40) {
+                                output_text =RadixSortMethod(stoi(input_text));
+                                textResultValue.setString(output_text.first);
+                                textElapsedTimeValue.setString(output_text.second);
+                                ExtractBMIsFromFile();
+                            } else { validNumber = false; }
                         }
                     if ((mousePos.x >= 468 ) && (mousePos.x <= 700 )
-                        && (mousePos.y >= 300 ) && (mousePos.y <= 382 )) {
-                        output_text =MergeSortMethod();
-                        //output_text = "using merge " ;
-                        textResultValue.setString(output_text);
+                        && (mousePos.y >= 250 ) && (mousePos.y <= 332 )) {
+                            if (stoi(input_text) >=18 && stoi(input_text) <=40) {
+                                output_text =MergeSortMethod(stoi(input_text));
+                                textResultValue.setString(output_text.first);
+                                textElapsedTimeValue.setString(output_text.second);
+                                ExtractBMIsFromFile();
+                            } else { validNumber = false; }
                         }
                 }
             }
             if (event.type == sf::Event::TextEntered) {
-                if (std::isprint(event.text.unicode))
-                    input_text += event.text.unicode;
+                if (event.text.unicode > 47 && event.text.unicode < 58) {
+                    validNumber = true;
+                    if (std::isprint(event.text.unicode))
+                        input_text += event.text.unicode;
+                }
             }
             else if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::BackSpace) {
+                    validNumber = true;
                     if (!input_text.empty())
                         input_text.pop_back();
                 }
-                if (event.key.code == sf::Keyboard::Return) {
-                    input_text += '\n';
-                }
+                //if (event.key.code == sf::Keyboard::Return) {
+                //    input_text += '\n';
+                //}
             }
         }
 
@@ -210,6 +301,15 @@ void InterfaceUI::SFMLInterface() {
 
         // Update the window
         window.clear(sf::Color::White);
+        if (!validNumber) {
+            window.draw(textWarningLabel);
+            radixTexture.loadFromFile("../resources/images/disbtnradixsort.png");
+            mergeTexture.loadFromFile("../resources/images/disbtnmergesort.png");
+        }
+        else {
+            radixTexture.loadFromFile("../resources/images/btnradixsort.png");
+            mergeTexture.loadFromFile("../resources/images/btnmergesort.png");
+        }
         window.draw(textTitle);
         window.draw(textLabel);
         window.draw(textInput);
@@ -217,6 +317,10 @@ void InterfaceUI::SFMLInterface() {
         window.draw(mergeSprite);
         window.draw(textResultLabel);
         window.draw(textResultValue);
+        window.draw(textElapsedTimeLabel);
+        window.draw(textElapsedTimeValue);
+        window.draw(textTeamLabel);
+
         window.display();
     }
 }

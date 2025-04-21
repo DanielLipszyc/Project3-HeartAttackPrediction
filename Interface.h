@@ -7,12 +7,14 @@ using namespace std;
 
 
 class InterfaceUI {
+private:
+    double GetAverageScore(int filter);
 public:
     vector<Patient*> patients;
     void SFMLInterface();
     void ExtractBMIsFromFile();
-    string MergeSortMethod();
-    string RadixSortMethod();
+    pair<string, string> MergeSortMethod(int filterValue);
+    pair<string, string> RadixSortMethod(int filterValue);
 };
 
 
