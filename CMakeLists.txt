@@ -11,6 +11,8 @@ add_executable(Project3_HeartAttackPrediction
         MergeSort.h
         Interface.cpp
         Interface.h
+        RadixSort.cpp
+        RadixSort.h
 )
 set(SFML_STATIC_LIBRARIES TRUE)
 set(SFML_DIR ./resources/SFML-2.5.1/lib/cmake/SFML)
