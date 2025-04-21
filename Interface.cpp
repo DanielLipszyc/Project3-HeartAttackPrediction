@@ -1,10 +1,79 @@
 #include <string>
-#include <vector>
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include "Interface.h"
-
+#include "RadixSort.h"
+#include "MergeSort.h"
+#include <ctime>
 using namespace std;
+
+void InterfaceUI::ExtractBMIsFromFile() {
+    this->patients.clear();
+    ifstream file("../heart_attack_dataset.csv");
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file 'ONE'." << endl;
+        return;
+    }
+    string line;
+    getline(file, line); // skip header
+    int count = 0;
+    while (getline(file, line)) {
+        size_t start = 0;
+        size_t end = 0;
+        int index = 0;
+        float bmi = 0;
+        int stressLevel = 0;
+        int outcome = 0;
+        string token;
+
+        while (end != string::npos && index <= 31) {
+            end = line.find(',', start);
+            token = line.substr(start, end - start);
+
+            if (index == 5) {
+                bmi = stof(token);
+            }
+
+            else if(index == 13){
+                stressLevel = stoi(token);
+            }
+
+            else if (index == 31) {
+                outcome = (token == "Heart Attack") ? 1 : 0;
+                break;
+            }
+
+            start = end + 1;
+            ++index;
+        }
+
+        Patient* P = new Patient(bmi, outcome, stressLevel);
+        patients.push_back(P);
+
+        ++index;
+        count++;
+    }
+    file.close();
+}
+
+
+string InterfaceUI::MergeSortMethod() {
+    time_t start, end;
+    time(&start);
+    mergeSort(this->patients, 0, this->patients.size() - 1);
+    time(&end);
+    double diff = difftime(end, start);
+    return to_string(diff) + " - Merge Sort" ;
+}
+
+string InterfaceUI::RadixSortMethod() {
+    time_t start, end;
+    time(&start);
+    radixSort(this->patients);
+    time(&end);
+    double diff = difftime(end, start);
+    return to_string(diff) + " - Radix Sort";
+}
+
 
 void InterfaceUI::SFMLInterface() {
 
@@ -96,14 +165,14 @@ void InterfaceUI::SFMLInterface() {
                     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                     if ((mousePos.x >= 100 ) && (mousePos.x <= 332 )
                         && (mousePos.y >= 300 ) && (mousePos.y <= 382 )) {
-                        //output_text =RadixSort(stoi(input_text));
-                        output_text = "using radix";
+                        output_text =RadixSortMethod();
+                        //output_text = "using radix";
                         textResultValue.setString(output_text);
                         }
                     if ((mousePos.x >= 468 ) && (mousePos.x <= 700 )
                         && (mousePos.y >= 300 ) && (mousePos.y <= 382 )) {
-                        //output_text =MergeSort(stoi(input_text));
-                        output_text = "using merge " ;
+                        output_text =MergeSortMethod();
+                        //output_text = "using merge " ;
                         textResultValue.setString(output_text);
                         }
                 }

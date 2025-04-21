@@ -1,12 +1,12 @@
-#ifndef RADIXSORT_H
-#define RADIXSORT_H
+#ifndef RADIX_SORT_H
+#define RADIX_SORT_H
 
-#include "PatientObject.h"
 #include <vector>
+#include "PatientObject.h"
 using namespace std;
 
-int getMax(vector<Patient*> P);
+int getMax(vector<Patient*>& P);
 void countingSort(vector<Patient*>& P, int exp);
 void radixSort(vector<Patient*>& P);
 
-#endif //RADIXSORT_H
+#endif //RADIX_SORT_H
