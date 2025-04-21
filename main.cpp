@@ -1,12 +1,11 @@
-//
-// Created by Daniel Lipszyc on 4/20/25.
-//
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include "MergeSort.h"
+#include "Interface.h"
 
 using namespace std;
 
@@ -59,8 +58,13 @@ void extractBMIsFromFile(vector<Patient*> &list) {
 }
 
 int main(){
+
+
     vector<Patient*> Patients = {};
-    extractBMIsFromFile(Patients);
+    //extractBMIsFromFile(Patients);
+
+    InterfaceUI ui;
+    ui.SFMLInterface();
 
     return 0;
 }
