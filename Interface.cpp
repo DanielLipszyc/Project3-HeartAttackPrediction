@@ -246,21 +246,33 @@ void InterfaceUI::SFMLInterface() {
                     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                     if ((mousePos.x >= 100 ) && (mousePos.x <= 332 )
                         && (mousePos.y >= 250 ) && (mousePos.y <= 332 )) {
-                            if (stoi(input_text) >=18 && stoi(input_text) <=40) {
-                                output_text =RadixSortMethod(stoi(input_text));
-                                textResultValue.setString(output_text.first);
-                                textElapsedTimeValue.setString(output_text.second);
-                                ExtractBMIsFromFile();
-                            } else { validNumber = false; }
+                            if (input_text != "") {
+                                if (stoi(input_text) >=18 && stoi(input_text) <=40) {
+                                    radixTexture.loadFromFile("../resources/images/sorting.png");
+                                    window.draw(radixSprite);
+                                    window.display();
+                                    output_text =RadixSortMethod(stoi(input_text));
+                                    textResultValue.setString(output_text.first);
+                                    textElapsedTimeValue.setString(output_text.second);
+                                    ExtractBMIsFromFile();
+                                    radixTexture.loadFromFile("../resources/images/btnradixsort.png");
+                                } else { validNumber = false; }
+                            }
                         }
                     if ((mousePos.x >= 468 ) && (mousePos.x <= 700 )
                         && (mousePos.y >= 250 ) && (mousePos.y <= 332 )) {
-                            if (stoi(input_text) >=18 && stoi(input_text) <=40) {
-                                output_text =MergeSortMethod(stoi(input_text));
-                                textResultValue.setString(output_text.first);
-                                textElapsedTimeValue.setString(output_text.second);
-                                ExtractBMIsFromFile();
-                            } else { validNumber = false; }
+                            if (input_text != "") {
+                                if (stoi(input_text) >=18 && stoi(input_text) <=40) {
+                                    mergeTexture.loadFromFile("../resources/images/sorting.png");
+                                    window.draw(mergeSprite);
+                                    window.display();
+                                    output_text =MergeSortMethod(stoi(input_text));
+                                    textResultValue.setString(output_text.first);
+                                    textElapsedTimeValue.setString(output_text.second);
+                                    ExtractBMIsFromFile();
+                                    mergeTexture.loadFromFile("../resources/images/btnmergesort.png");
+                                } else { validNumber = false; }
+                            }
                         }
                 }
             }
@@ -320,7 +332,6 @@ void InterfaceUI::SFMLInterface() {
         window.draw(textElapsedTimeLabel);
         window.draw(textElapsedTimeValue);
         window.draw(textTeamLabel);
-
         window.display();
     }
 }
