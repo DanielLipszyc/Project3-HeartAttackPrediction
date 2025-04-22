@@ -8,8 +8,12 @@
 #include <chrono>
 using namespace std;
 
+///Use our own knowledge and online resources
+
 void InterfaceUI::ExtractBMIsFromFile() {
+
     this->patients.clear();
+
     ifstream file("../heart_attack_dataset.csv");
     if (!file.is_open()) {
         cerr << "Error: Could not open file 'ONE'." << endl;
@@ -55,7 +59,9 @@ void InterfaceUI::ExtractBMIsFromFile() {
         count++;
     }
     file.close();
+
 }
+
 
 
 double InterfaceUI::GetAverageScore(int filter) {
@@ -63,25 +69,32 @@ double InterfaceUI::GetAverageScore(int filter) {
     int positive = 0;
     int total = 0;
     vector<Patient*> BMI_Group = {};
+
+    cout << "patient size :"<< patients.size() << endl;
+    cout << "target BMI :"<< targetBMI << endl;
+
     for(int i = 0; i < this->patients.size(); i++){
         if(this->patients[i]->BMI < targetBMI){
-            i++;
+            //i++;
         }
         else if(this->patients[i]->BMI == targetBMI){
             BMI_Group.push_back(this->patients[i]);
-            i++;
+            //i++;
         }
         else{
             break;
         }
+
     }
 
     for(Patient* P : BMI_Group){
         if(P->HAO == 1){
-            positive++;
+           positive++;
         }
         total++;
     }
+
+    cout << "total" << total << " - " << "positive " << positive << endl;
 
     double average = (positive*1.0) / total;
     return average * 100;
