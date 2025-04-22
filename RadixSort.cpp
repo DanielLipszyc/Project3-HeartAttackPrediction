@@ -1,7 +1,7 @@
 #include "RadixSort.h"
-
 using namespace std;
 
+///Use our own knowledge and online resources
 int getMax(vector<Patient*>& P) {
     int max = P[0]->BMI;
     for (int i = 1; i < P.size(); i++){
